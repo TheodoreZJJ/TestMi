@@ -10,9 +10,9 @@ import time
 import requests
 
 # 开启根据地区天气情况降低步数（默认关闭）
-open_get_weather = "NO"
+open_get_weather = sys.argv[3]
 # 设置获取天气的地区（上面开启后必填）如：area = "宁波"
-area = "NO"
+area = sys.argv[4]
 
 # 以下如果看不懂直接默认就行只需改上面
 
@@ -61,44 +61,16 @@ def getWeather():
 
 # 获取北京时间确定随机步数&启动主函数
 def getBeijinTime():
-    global K, type
-    K = 1.0
-    type = ""
-    hea = {'User-Agent': 'Mozilla/5.0'}
-    url = r'https://apps.game.qq.com/CommArticle/app/reg/gdate.php'
-    if open_get_weather == "True":
-        getWeather()
-    r = requests.get(url=url, headers=hea)
-    if r.status_code == 200:
-        result = r.text
-        pattern = re.compile('\\d{4}-\\d{2}-\\d{2} (\\d{2}):\\d{2}:\\d{2}')
-        find = re.search(pattern, result)
-        hour = find.group(1)
-        min_ratio = max(math.ceil((int(hour) / 3) - 1), 0)
-        max_ratio = math.ceil(int(hour) / 3)
-        #min_1 = 3500 * min_ratio
-        #max_1 = 3500 * max_ratio
-        min_1 = 15100
-        max_1 = 15300
-        min_1 = int(K * min_1)
-        max_1 = int(K * max_1)
-    else:
-        print("获取北京时间失败")
-        return
-    if min_1 != 0 and max_1 != 0:
-        #user_mi = sys.argv[1]
-        # 登录密码
-        #passwd_mi = sys.argv[2]
+    min_1 = 15100
+    max_1 = 15300 
 
-        user_mi = "theodore.zjj1@live.com#theodore.zjj2@live.com"
-        passwd_mi = "1qaz@WSX#1qaz@WSX"
+    if min_1 != 0 and max_1 != 0:
+        user_mi = sys.argv[1]
+        # 登录密码
+        passwd_mi = sys.argv[2]
         user_list = user_mi.split('#')
         passwd_list = passwd_mi.split('#')
         if len(user_list) == len(passwd_list):
-            if K != 1.0:
-                msg_mi = "由于天气" + type + "，已设置降低步数,系数为" + str(K) + "。\n"
-            else:
-                msg_mi = ""
             for user_mi, passwd_mi in zip(user_list, passwd_list):
                 msg_mi += main(user_mi, passwd_mi, min_1, max_1)
                 # print(msg_mi)
@@ -139,8 +111,8 @@ def login(user, password):
         code = get_code(location)
     except:
         return 0, 0
-    #print("access_code获取成功！")
-    #print(code)
+    # print("access_code获取成功！")
+    # print(code)
 
     url2 = "https://account.huami.com/v2/client/login"
     if is_phone:
@@ -190,7 +162,6 @@ def main(_user, _passwd, min_1, max_1):
     if user == '' or password == '':
         print("用户名或密码填写有误！")
         return
-    print(_user+_passwd)
     login_token, userid = login(user, password)
     if login_token == 0:
         print("登陆失败！")
