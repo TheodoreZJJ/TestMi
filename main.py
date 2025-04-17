@@ -168,7 +168,7 @@ def main(_user, _passwd, min_1, max_1):
         print("登陆失败！")
         return "login fail!"
 
-    # t = get_time()
+    t = get_time()
 
     app_token = get_app_token(login_token)
 
@@ -198,10 +198,12 @@ def main(_user, _passwd, min_1, max_1):
 
 # 获取时间戳
 def get_time():
-    url = 'http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp'
-    response = requests.get(url, headers=headers).json()
-    t = response['data']['t']
-    return t
+    def get_time():
+        utc_now = datetime.datetime.utcnow()
+        beijing_tz = pytz.timezone('Asia/Shanghai')
+        beijing_now = utc_now.replace(tzinfo=pytz.utc).astimezone(beijing_tz)
+        t = int(beijing_now.timestamp() * 1000)
+        return t
 
 
 # 获取app_token
